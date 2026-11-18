@@ -1,0 +1,48 @@
+name: PRANAV Master Build
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-all:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Grant Gradle Wrapper Permission
+      run: chmod +x gradlew
+
+    - name: Build Android Admin APK
+      run: ./gradlew :app:assembleDebug --no-daemon
+
+    - name: Build DEX and Package Artifacts
+      run: |
+        if [ -f "PRANAV/dex/build-dex.sh" ]; then
+          chmod +x PRANAV/dex/build-dex.sh
+          bash PRANAV/dex/build-dex.sh
+        fi
+
+    - name: Upload All APKs and Build Files
+      uses: actions/upload-artifact@v4
+      with:
+        name: PRANAV-FULL-BUILD-OUTPUT
+        path: |
+          app/build/outputs/apk/debug/app-debug.apk
+          PRANAV/dex/build/*.dex
+        if-no-files-found: ignore
+        retention-days: 14
