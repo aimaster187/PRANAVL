@@ -24,25 +24,16 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Generate Gradle Wrapper and Build Admin APK
+    - name: Build Admin APK Direct
       run: |
-        gradle wrapper --gradle-version 8.5
-        chmod +x gradlew
-        ./gradlew :app:assembleDebug --no-daemon
+        export TERM=dumb
+        chmod +x gradlew || true
+        ./gradlew :app:assembleDebug --no-gradle-user-home --no-daemon
 
-    - name: Build DEX and Package Artifacts
-      run: |
-        if [ -f "PRANAV/dex/build-dex.sh" ]; then
-          chmod +x PRANAV/dex/build-dex.sh
-          bash PRANAV/dex/build-dex.sh
-        fi
-
-    - name: Upload All APKs and Build Files
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: PRANAV-FULL-BUILD-OUTPUT
-        path: |
-          app/build/outputs/apk/debug/app-debug.apk
-          PRANAV/dex/build/*.dex
-        if-no-files-found: ignore
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: error
         retention-days: 14
