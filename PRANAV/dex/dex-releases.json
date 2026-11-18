@@ -1,0 +1,21 @@
+{
+  "latestVersion": "1.4.0",
+  "latestVersionCode": 140,
+  "releases": [
+    {
+      "versionName": "1.4.0",
+      "versionCode": 140,
+      "minSdk": 24,
+      "targetSdk": 36,
+      "artifact": "build/pranav-sdk-1.4.0.dex",
+      "sha256Checksum": "7dce1cff974efb7dd8f19be3e1e6b1581bbfd55a7d161426a0cb42dbc83bd15a",
+      "entryClass": "com.pranav.sdk.PranavSdk",
+      "recommendedHooks": [
+        "APPLICATION_ON_CREATE",
+        "ACTIVITY_ON_CREATE",
+        "ATTACH_BASE_CONTEXT"
+      ],
+      "releaseNotes": "Universal PRANAV DEX v1.4.0 with ActivityLifecycleCallbacks, Remote Config cache, Dynamic Modules, APK Update DownloadManager, Banner/Toast/Popup Announcements, and Keystore EC P-256 Auth."
+    }
+  ]
+}

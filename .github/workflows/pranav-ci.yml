@@ -1,0 +1,67 @@
+name: PRANAV Ecosystem CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  backend-and-dex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Java 17 & Android SDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Run Backend Unit & Integration Tests
+        run: node --test PRANAV/backend/tests/backend.test.js
+
+      - name: Run Admin -> Backend -> SDK E2E Contract Tests
+        run: node --test PRANAV/tests/e2e_contract.test.js
+
+      - name: Build Universal DEX & Verify Sample Integrated APK
+        run: bash PRANAV/tests/build_and_verify_sample_apk.sh
+
+      - name: Upload Universal DEX & Sample APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pranav-dex-and-sample-apk
+          path: |
+            PRANAV/dex/build/pranav-sdk-1.4.0.dex
+            PRANAV/tests/output/sample-apk/sample-pranav-integrated.apk
+
+  android-admin-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Run Robolectric Unit Tests
+        run: gradle :app:testDebugUnitTest
+
+      - name: Build Debug Admin APK
+        run: gradle :app:assembleDebug
+
+      - name: Upload PRANAV Admin Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pranav-admin-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
