@@ -1,4 +1,4 @@
-name: PRANAV Master Build
+name: Build APK Direct
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-all:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,16 +19,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Build Admin APK Direct
+    - name: Build APK with System Gradle
       run: |
-        export TERM=dumb
-        chmod +x gradlew || true
-        ./gradlew :app:assembleDebug --no-gradle-user-home --no-daemon
+        gradle :app:assembleDebug --no-daemon
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
